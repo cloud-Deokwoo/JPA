@@ -18,9 +18,9 @@ import lombok.extern.log4j.Log4j2;
 public class RepositoryTest {
 	
 	@Autowired
-	MemoRepository memoRepository;
+	MemoRepository memoRepository;  //MemoRepository 주입
 	
-	@Test
+	@Test   //주입 확인 테스트... 
 	public void testDependency() {
 		log.info("주입 여주:"+memoRepository.getClass().getName());
 	}
