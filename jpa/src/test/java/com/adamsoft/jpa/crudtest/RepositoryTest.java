@@ -6,12 +6,17 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.adamsoft.jpa.entity.Memo;
 import com.adamsoft.jpa.repository.MemoRepository;
 
 
 import lombok.extern.log4j.Log4j2;
+
 
 @Log4j2
 @SpringBootTest
@@ -60,4 +65,54 @@ public class RepositoryTest {
 		Long mno = 100L;
 		memoRepository.deleteById(mno);
 	}
+	
+	//페이징 테스트 
+	// 페이징
+	@Test
+	public void testPageDefault() {
+		//1페이지 10개
+		Pageable pageable = PageRequest.of(0,10);
+		Page<Memo> result = memoRepository.findAll(pageable);
+		log.info(result);
+		log.info("--------------------------------------------------");
+		log.info("Total Pages: "+result.getTotalPages());  //전체 페이지 개수
+		log.info("Total Count: "+result.getTotalElements());  //전체 데이터 개수
+		log.info("Page Number: "+result.getNumber());  //현재 페이지 번호 0부터 시작
+		log.info("Page Size: "+result.getSize());  //페이지당 데이터 개수
+		log.info("Has next page?: "+result.hasNext());  //다음 페이지 존재 여부
+		log.info("First Page?: "+result.isFirst());  //시작 페이지(0) 여부
+		log.info("--------------------------------------------------");
+		//데이터 순회
+		for(Memo memo:result.getContent()) {
+			log.info(memo);
+		}
+				
+	}
+	
+	//정렬 테스트 - mno의 내림차순 정렬
+	public void testSort() {
+		Sort sort1 = Sort.by("mno").descending();
+		Pageable pageable = PageRequest.of(0, 10,sort1);
+		Page<Memo> result = memoRepository.findAll(pageable);
+		result.get().forEach(memo -> {
+			log.info(memo);
+		});
+	}
+	
+	//정렬 테스트 - 결합된 조건
+	@Test
+	public void testSortConcate() {
+		Sort sort1 = Sort.by("mno").descending();
+		Sort sort2 = Sort.by("memoText").ascending();
+		Sort sortAll = sort1.and(sort2); // and를 이용한 연결
+		Pageable pageable = PageRequest.of(0, 10,sortAll); //결합된 정렬 조건
+		Page<Memo> result = memoRepository.findAll(pageable);
+		result.get().forEach(memo -> {
+			log.info(memo);
+		});
+	}
+	
+	
+	
+	
 }
