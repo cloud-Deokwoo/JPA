@@ -1,0 +1,8 @@
+[core]
+	symlinks = false
+	repositoryformatversion = 0
+	filemode = false
+	bare = true
+	logallrefupdates = false
+[remote "origin"]
+	url = https://github.com/cloud-Deokwoo/JPA.git
